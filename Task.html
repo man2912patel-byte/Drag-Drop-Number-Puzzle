@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find The Secret Number</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+color:white;
+}
+
+.container{
+display:flex;
+gap:40px;
+width:100%;
+max-width:1400px;
+}
+
+.left{
+flex:2;
+display:grid;
+grid-template-columns:repeat(10,65px);
+gap:15px;
+justify-content:center;
+}
+
+.number{
+width:60px;
+height:60px;
+border-radius:50%;
+background:white;
+color:#333;
+font-weight:bold;
+font-size:18px;
+display:flex;
+justify-content:center;
+align-items:center;
+cursor:grab;
+border:3px solid #00e5ff;
+transition:.3s;
+box-shadow:0 0 10px cyan;
+}
+
+.number:hover{
+transform:scale(1.1);
+background:#00e5ff;
+color:white;
+}
+
+.right{
+width:380px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(15px);
+border-radius:20px;
+padding:30px;
+text-align:center;
+box-shadow:0 0 20px rgba(0,255,255,.4);
+}
+
+.right h1{
+margin-bottom:20px;
+}
+
+#dropZone{
+height:250px;
+border:4px dashed black;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:28px;
+margin:20px 0;
+transition:.3s;
+}
+
+#message{
+font-size:28px;
+font-weight:bold;
+margin:20px 0;
+min-height:40px;
+}
+
+#attempt{
+font-size:22px;
+margin-top:10px;
+}
+
+.popup{
+position:fixed;
+top:30px;
+left:50%;
+transform:translateX(-50%);
+padding:15px 40px;
+background:white;
+color:#333;
+border-radius:10px;
+font-size:24px;
+font-weight:bold;
+display:none;
+box-shadow:0 10px 20px rgba(0,0,0,.4);
+animation:pop .4s;
+}
+
+@keyframes pop{
+from{
+opacity:0;
+transform:translate(-50%,-30px);
+}
+to{
+opacity:1;
+transform:translate(-50%,0);
+}
+}
+
+.win{
+background:#00c853!important;
+color:white!important;
+}
+
+.high{
+background:#1565c0!important;
+color:white!important;
+}
+
+.low{
+background:#ef6c00!important;
+color:white!important;
+}
+</style>
+
+</head>
+<body>
+
+<div class="popup" id="popup"></div>
+
+<div class="container">
+
+<div class="left" id="numbers"></div>
+
+<div class="right">
+
+<h1>🎯 Find Secret Number</h1>
+
+<p>Drag a number into the box.</p>
+
+<div id="dropZone">
+Drop Here
+</div>
+
+<div id="message">
+Start Guessing...
+</div>
+
+<div id="attempt">
+Attempts : 0
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const numbers=document.getElementById("numbers");
+const drop=document.getElementById("dropZone");
+const msg=document.getElementById("message");
+const popup=document.getElementById("popup");
+const attempt=document.getElementById("attempt");
+
+let secret=Math.floor(Math.random()*100)+1;
+let count=0;
+
+for(let i=1;i<=100;i++){
+
+let div=document.createElement("div");
+
+div.className="number";
+div.innerHTML=i;
+div.draggable=true;
+
+div.addEventListener("dragstart",e=>{
+e.dataTransfer.setData("text",i);
+});
+
+numbers.appendChild(div);
+
+}
+
+drop.addEventListener("dragover",e=>{
+e.preventDefault();
+});
+
+drop.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+let value=Number(e.dataTransfer.getData("text"));
+
+count++;
+attempt.innerHTML="Attempts : "+count;
+
+drop.innerHTML=value;
+
+if(value<secret){
+
+msg.innerHTML="⬆️ GO HIGHER";
+msg.style.color="#00e5ff";
+drop.className="high";
+show("⬆️ Go Higher");
+
+}
+
+else if(value>secret){
+
+msg.innerHTML="⬇️ GO LOWER";
+msg.style.color="#ffb74d";
+drop.className="low";
+show("⬇️ Go Lower");
+
+}
+
+else{
+
+msg.innerHTML="🎉 CORRECT!";
+msg.style.color="#00ff99";
+drop.className="win";
+show("🎉 Congratulations");
+
+setTimeout(()=>{
+
+alert("You found the Secret Number in "+count+" Attempts!");
+
+secret=Math.floor(Math.random()*100)+1;
+
+count=0;
+
+attempt.innerHTML="Attempts : 0";
+
+drop.innerHTML="Drop Here";
+
+drop.className="";
+
+msg.innerHTML="Start Guessing...";
+
+},1200);
+
+}
+
+});
+
+function show(text){
+
+popup.innerHTML=text;
+
+popup.style.display="block";
+
+setTimeout(()=>{
+
+popup.style.display="none";
+
+},1000);
+
+}
+
+</script>
+
+</body>
+</html>
